@@ -171,3 +171,4 @@ sudo bash sheng-nixos-rootfs_build.sh nixos 7.1 all niri
 ---
 
 **谨慎操作 — 祝使用愉快！**
+
