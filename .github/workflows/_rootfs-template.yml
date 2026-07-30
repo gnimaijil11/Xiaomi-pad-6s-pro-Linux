@@ -3,6 +3,16 @@ name: RootFS Build Template
 on:
   workflow_call:
     inputs:
+      kernel_channel_default:
+        description: 'Default kernel channel'
+        required: false
+        type: string
+        default: 'mainline'
+      kernel_channel:
+        description: 'Kernel channel from user input'
+        required: false
+        type: string
+        default: ''
       distro:
         description: 'Distro identifier passed to script'
         required: true
