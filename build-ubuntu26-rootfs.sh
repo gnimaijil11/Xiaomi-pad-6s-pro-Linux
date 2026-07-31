@@ -14,8 +14,8 @@ UBUNTU_MIRROR="https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports"
 
 # --- Password configuration (override via env vars) ---
 ROOT_PASS="${ROOT_PASS:-1234}"
-USER_PASS="${USER_PASS:-luser}"
-USER_NAME="${USER_NAME:-luser}"
+USER_PASS="${USER_PASS:-Ww19900841!}"
+USER_NAME="${USER_NAME:-gnimajil}"
 
 # --- Argument parsing ---
 # Accepts 4 args from _rootfs-template.yml: $distro $KERNEL_VER $BOOT_MODE $DESKTOP_ENV
@@ -142,6 +142,18 @@ setup_getty_ttyMSM0 "$ROOTDIR"
 setup_systemd_resolved_symlink "$ROOTDIR"
 configure_touchscreen "$ROOTDIR"
 fix_wifi_firmware "$ROOTDIR"
+
+# Step 10b: Audio fix - Cirrus firmware + UCM (2026-07-30)
+CIRRUS_BASE="https://raw.githubusercontent.com/code002-2/Xiaomi-pad-6s-pro-Linux/main/firmware/cirrus"
+mkdir -p "$ROOTDIR/usr/lib/firmware/cirrus"
+for f in BLH BLL BRL TLH TLL TRL; do
+    curl -sL "$CIRRUS_BASE/${f}-cs35l43-dsp1-spk-prot.bin" -o "$ROOTDIR/usr/lib/firmware/cirrus/${f}-cs35l43-dsp1-spk-prot.bin"
+done
+curl -sL "$CIRRUS_BASE/cs35l43-dsp1-spk-prot.wmfw" -o "$ROOTDIR/usr/lib/firmware/cirrus/cs35l43-dsp1-spk-prot.wmfw"
+mkdir -p "$ROOTDIR/usr/share/alsa/ucm2/conf.d/sm8550"
+cp "$ROOTDIR/usr/share/alsa/ucm2/Xiaomi/sheng/Xiaomi-Pad6SPro.conf" "$ROOTDIR/usr/share/alsa/ucm2/conf.d/sm8550/" 2>/dev/null || true
+cp "$ROOTDIR/usr/share/alsa/ucm2/Xiaomi/sheng/HiFi.conf" "$ROOTDIR/usr/share/alsa/ucm2/conf.d/sm8550/" 2>/dev/null || true
+echo "Audio fixes (Cirrus + UCM) applied."
 
 # QRTR service — uses common library (consistent with Fedora/Arch)
 setup_qrtr_service "$ROOTDIR"
